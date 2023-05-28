@@ -1,4 +1,4 @@
-# Parking-Spaces-System
+# Controlled-Parking-Spaces-System
 
 Parking Spaces System built and simulated on Microcontroller 8051, specifically the AT89S51. 
 
