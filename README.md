@@ -1,6 +1,6 @@
 # Entrance Management System in a car parking lot
 
-Controlled Parking Spaces System created on the Software Keil uVision5 with C and Assembly languages
+Controlled Parking Spaces System created on the Software Keil uVision5 with C and Assembly languages, for the Computer Architecture class.
 
 Program simulated on the Software and on the Microcontroller 8051, specifically, the AT89S51
 
