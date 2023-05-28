@@ -1,0 +1,169 @@
+C51 COMPILER V9.60.7.0   P3_PARQUEDEESTACIONAMENTO                                         05/24/2023 20:20:14 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE P3_PARQUEDEESTACIONAMENTO
+OBJECT MODULE PLACED IN .\Objects\P3_ParqueDeEstacionamento.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE P3_ParqueDeEstacionamento.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND 
+                    -PRINT(.\Listings\P3_ParqueDeEstacionamento.lst) TABS(2) OBJECT(.\Objects\P3_ParqueDeEstacionamento.obj)
+
+line level    source
+
+   1          // P3 -> Arquitetura de Computadores
+   2          // Sistema de gestão de entradas em um parque de estacionamento
+   3          // Linguagem C
+   4          
+   5          #include <reg51.h>            // biblioteca do 8051
+   6          
+   7          //ciclos
+   8          #define Contagens 100         // 100 contagens * 10000us = 1s
+   9          
+  10          //luzes
+  11          sbit Verde1 = P1^0;           //LED Verde1
+  12          sbit Vermelho1 = P1^1;        //LED Vermelho1 
+  13          sbit Amarelo = P1^2;          //LED Amarelo 
+  14          sbit Verde2 = P1^3;           //LED Verde2 
+  15          sbit Vermelho2 = P1^4;        //LED Vermelho2 
+  16          
+  17          //sensores
+  18          bit Sensor1 = 0;              //Sensor1 -> P3^2
+  19          bit Sensor2 = 0;              //Sensor2 -> P3^3
+  20          
+  21          //display
+  22          int display = 9;              //valores do display 
+  23          
+  24          //lugares de estacionamento
+  25          int lugar = 9;                //Número máximo de lugares disponíveis 
+  26          
+  27          //Variáveis Globais 
+  28          int cada_segundo = 0;         //conta cada segundo 
+  29          int conta = 0;                //contar os 5 segundos
+  30          
+  31          
+  32          void Init(void) {
+  33   1        //IE
+  34   1        EA = 1;                     //Ativa Interrupções Globais      
+  35   1        EX0 = 1;                    //Ativa Interrupção Externa 0
+  36   1        ET0 = 1;                    //Ativa Interrupção Timer 0
+  37   1        EX1 = 1;                    //Ativa Interrupção Externa 1
+  38   1        
+  39   1        //TMOD - Timer Mode Configuration
+  40   1        // 2^16 - 10000 = 55536 -> D8F0H
+  41   1        TMOD |= 0x01;               //Timer Mode 1
+  42   1        TH0 = 0xD8;                 //Bit menos significativo no TH0 = 0xD8
+  43   1        TL0 = 0xF0;                 //Bit mais significativo em TL0 = 0xF0
+  44   1        
+  45   1        //IP
+  46   1        IP = 2;                     //prioridade mais elevada no zero
+  47   1        
+  48   1        //TCON
+  49   1        IT0 = 1;                    //Ser detetado na Transição descendente
+  50   1        IT1 = 1;
+  51   1        
+  52   1        P2 = display;               //Inicializa o Display 9
+  53   1      }
+  54          
+C51 COMPILER V9.60.7.0   P3_PARQUEDEESTACIONAMENTO                                         05/24/2023 20:20:14 PAGE 2   
+
+  55          //Programa Principal
+  56          void main(void) {             // Inicia o Programa Principal 
+  57   1        
+  58   1        //Inicializações
+  59   1        Init();
+  60   1        
+  61   1        //LOOP Infinito
+  62   1        while(1) {
+  63   2        
+  64   2        //Estado inicial dos LEDs
+  65   2        Verde1 = 0;                 // Ativa o LED Verde1 
+  66   2        Vermelho1 = 1;              // Desativa o LED Vermelho1 
+  67   2        Amarelo = 1;                // Desativa o LED Amarelo 
+  68   2        Verde2 = 0;                 // Ativa o LED Verde2
+  69   2        Vermelho2 = 1;              // Desativa o LED Vermelho2
+  70   2        P2 = display;               // lugares no momento
+  71   2        }   
+  72   1      }
+  73          
+  74          void Entrada(void) {
+  75   1        Amarelo = 0;
+  76   1        conta = 0;
+  77   1        TR0 = 1;
+  78   1        while(conta < 5){                           // ciclo while -> se a contagem for menor que 5 segundos
+  79   2          if(cada_segundo == Contagens){            // se a contagem de cada segundo for igual ao número de contagens 
+  80   3            conta++;                                // incrementa a contagem dos 5 segundos 
+  81   3            Amarelo = ~Amarelo;                     // Altera o estado do LED Amarelo 
+  82   3            cada_segundo = 0;                 
+  83   3          }
+  84   2          //alteração dos leds, caso entre um carro
+  85   2          Verde1 = 0;                               // Desliga o LED Verde1
+  86   2          Vermelho1 = 1;                            // Liga o LED Vermelho1
+  87   2          Verde2 = 1;                               // Liga o LED Verde2
+  88   2          Vermelho2 = 0;                            // Desliga o LED Vermelho2
+  89   2        }
+  90   1        Amarelo = 1;
+  91   1        display--;                                  // Decrementa o número do Display, ou seja, é ocupado mais um lugar no estacio
+             -namento
+  92   1        TR0 = 0;                                    // Para o Timer 0
+  93   1      }
+  94          
+  95          void Saida(void) {
+  96   1        Amarelo = 0;
+  97   1        conta = 0;
+  98   1        TR0 = 1;
+  99   1        while(conta < 5){                           // Se o contador não ultrapassar os 5 segundos
+ 100   2          if(cada_segundo == Contagens){            // Cada segundo corresponde ao número de contagens 
+ 101   3            conta++;                                // Incrementa a contagem dos 5 segundos 
+ 102   3            Amarelo = ~Amarelo;                     // Altera o estado do LED Amarelo 
+ 103   3            cada_segundo = 0;
+ 104   3          }
+ 105   2          //alteração dos leds, caso entre um carro
+ 106   2          Verde1 = 1;                               // Desliga o LED Verde1
+ 107   2          Vermelho1 = 0;                            // Desliga o LED Vermelho1
+ 108   2          Verde2 = 0;                               // Desliga o LED Verde2
+ 109   2          Vermelho2 = 1;                            // Liga o LED Vermelho2
+ 110   2        }
+ 111   1        Amarelo = 1;                                // Ativa o LED Amarelo 
+ 112   1        display++;                                  // Incrementa o valor do Display, ou seja, existe mais um lugar livre no estac
+             -ionamento 
+ 113   1        TR0 = 0;                                    // Para o Timer 0
+ 114   1      }
+C51 COMPILER V9.60.7.0   P3_PARQUEDEESTACIONAMENTO                                         05/24/2023 20:20:14 PAGE 3   
+
+ 115          
+ 116          
+ 117          //Interrupção Externa 0
+ 118          void InterrupcaoExt0(void) interrupt 0 {      // De acordo com o Registo -> EX0 é o Bit 0
+ 119   1        if(display > 0) {                           // Se o estacionamento tiver algum lugar livre      
+ 120   2          Entrada();                                // Chama a função Entrada
+ 121   2        } 
+ 122   1      }
+ 123          
+ 124          //Interrupção Timer 0
+ 125          void InterrupcaoTemp0(void) interrupt 1 {     // De acordo com o Registo -> ET1 é o Bit 1
+ 126   1        TH0 = 0xD8;                                 // Byte mais Significativo: TH0 -> D8H
+ 127   1        TL0 = 0xF0;                                 // Byte menos Significativo: TL0 -> F0H
+ 128   1        cada_segundo++;                             // Incrementa a contagem de 1 em 1 segundo 
+ 129   1      }
+ 130          
+ 131          
+ 132          //Interrupção Externa 1
+ 133          void InterrupcaoExt1(void) interrupt 2 {      // De acordo com o Registo -> EX1 é o Bit 2
+ 134   1        if(display < 9) {                           // Se o estacionamento tiver algum lugar ocupado
+ 135   2          Saida();                                  // Chama a função Saída
+ 136   2        }
+ 137   1      }
+ 138          
+ 139          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    251    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

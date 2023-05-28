@@ -1,0 +1,221 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/24/2023  20:20:14  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\P3_ParqueDeEstacionamento.obj TO .\Objects\P3_CodigoC PRINT (.\Listings\P3_CodigoC
+>> .m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\P3_ParqueDeEstacionamento.obj (P3_PARQUEDEESTACIONAMENTO)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\P3_CodigoC (P3_PARQUEDEESTACIONAMENTO)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0008H     UNIT         ?DT?P3_PARQUEDEESTACIONAMENTO
+                    0010H     0010H                  *** GAP ***
+            BIT     0020H.0   0000H.2   UNIT         ?BI?P3_PARQUEDEESTACIONAMENTO
+                    0020H.2   0000H.6                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0003H     ABSOLUTE     
+                    0006H     0005H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+                    000EH     0005H                  *** GAP ***
+            CODE    0013H     0003H     ABSOLUTE     
+                    0016H     07EAH                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     0044H     UNIT         ?PR?ENTRADA?P3_PARQUEDEESTACIONAMENTO
+            CODE    08D0H     0044H     UNIT         ?PR?SAIDA?P3_PARQUEDEESTACIONAMENTO
+            CODE    0914H     001CH     UNIT         ?PR?INIT?P3_PARQUEDEESTACIONAMENTO
+            CODE    0930H     0019H     UNIT         ?PR?INTERRUPCAOEXT0?P3_PARQUEDEESTACIONAMENTO
+            CODE    0949H     0019H     UNIT         ?PR?INTERRUPCAOEXT1?P3_PARQUEDEESTACIONAMENTO
+            CODE    0962H     0015H     UNIT         ?C_INITSEG
+            CODE    0977H     0013H     UNIT         ?PR?INTERRUPCAOTEMP0?P3_PARQUEDEESTACIONAMENTO
+            CODE    098AH     0012H     UNIT         ?PR?MAIN?P3_PARQUEDEESTACIONAMENTO
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\P3_CodigoC (P3_PARQUEDEESTACIONAMENTO)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?PR?INTERRUPCAOEXT0?P3_PARQUEDEESTACI...
+  +--> ?PR?ENTRADA?P3_PARQUEDEESTACIONAMENTO
+
+*** NEW ROOT ***************************************************
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/24/2023  20:20:14  PAGE 2
+
+
+
+?PR?INTERRUPCAOEXT1?P3_PARQUEDEESTACI...
+  +--> ?PR?SAIDA?P3_PARQUEDEESTACIONAMENTO
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP
+  +--> ?PR?MAIN?P3_PARQUEDEESTACIONAMENTO
+  +--> ?C_INITSEG
+
+?PR?MAIN?P3_PARQUEDEESTACIONAMENTO
+  +--> ?PR?INIT?P3_PARQUEDEESTACIONAMENTO
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\P3_CodigoC (P3_PARQUEDEESTACIONAMENTO)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        P3_PARQUEDEESTACIONAMENTO
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  B:00A8H.7       PUBLIC        EA
+  C:0914H         PUBLIC        Init
+  D:0008H         PUBLIC        conta
+  D:00B8H         PUBLIC        IP
+  D:000AH         PUBLIC        lugar
+  C:098AH         PUBLIC        main
+  B:0090H.0       PUBLIC        Verde1
+  B:0090H.3       PUBLIC        Verde2
+  B:0020H.0       PUBLIC        Sensor1
+  B:0020H.1       PUBLIC        Sensor2
+  D:0089H         PUBLIC        TMOD
+  C:088CH         PUBLIC        Entrada
+  B:0090H.2       PUBLIC        Amarelo
+  B:00A8H.1       PUBLIC        ET0
+  D:008CH         PUBLIC        TH0
+  B:00A8H.0       PUBLIC        EX0
+  B:0088H.0       PUBLIC        IT0
+  B:00A8H.2       PUBLIC        EX1
+  B:0088H.2       PUBLIC        IT1
+  D:008AH         PUBLIC        TL0
+  B:0088H.4       PUBLIC        TR0
+  C:0977H         PUBLIC        InterrupcaoTemp0
+  C:08D0H         PUBLIC        Saida
+  D:000CH         PUBLIC        cada_segundo
+  C:0930H         PUBLIC        InterrupcaoExt0
+  C:0949H         PUBLIC        InterrupcaoExt1
+  B:0090H.1       PUBLIC        Vermelho1
+  B:0090H.4       PUBLIC        Vermelho2
+  D:000EH         PUBLIC        display
+  -------         PROC          INIT
+  C:0914H         LINE#         32
+  C:0914H         LINE#         34
+  C:0916H         LINE#         35
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/24/2023  20:20:14  PAGE 3
+
+
+  C:0918H         LINE#         36
+  C:091AH         LINE#         37
+  C:091CH         LINE#         41
+  C:091FH         LINE#         42
+  C:0922H         LINE#         43
+  C:0925H         LINE#         46
+  C:0928H         LINE#         49
+  C:092AH         LINE#         50
+  C:092CH         LINE#         52
+  C:092FH         LINE#         53
+  -------         ENDPROC       INIT
+  -------         PROC          MAIN
+  C:098AH         LINE#         56
+  C:098AH         LINE#         59
+  C:098DH         LINE#         62
+  C:098DH         LINE#         65
+  C:098FH         LINE#         66
+  C:0991H         LINE#         67
+  C:0993H         LINE#         68
+  C:0995H         LINE#         69
+  C:0997H         LINE#         70
+  C:099AH         LINE#         71
+  -------         ENDPROC       MAIN
+  -------         PROC          ENTRADA
+  C:088CH         LINE#         74
+  C:088CH         LINE#         75
+  C:088EH         LINE#         76
+  C:0893H         LINE#         77
+  C:0895H         LINE#         78
+  C:08A2H         LINE#         79
+  C:08AAH         LINE#         80
+  C:08B2H         LINE#         81
+  C:08B4H         LINE#         82
+  C:08B9H         LINE#         83
+  C:08B9H         LINE#         85
+  C:08BBH         LINE#         86
+  C:08BDH         LINE#         87
+  C:08BFH         LINE#         88
+  C:08C1H         LINE#         89
+  C:08C3H         LINE#         90
+  C:08C5H         LINE#         91
+  C:08CDH         LINE#         92
+  C:08CFH         LINE#         93
+  -------         ENDPROC       ENTRADA
+  -------         PROC          SAIDA
+  C:08D0H         LINE#         95
+  C:08D0H         LINE#         96
+  C:08D2H         LINE#         97
+  C:08D7H         LINE#         98
+  C:08D9H         LINE#         99
+  C:08E6H         LINE#         100
+  C:08EEH         LINE#         101
+  C:08F6H         LINE#         102
+  C:08F8H         LINE#         103
+  C:08FDH         LINE#         104
+  C:08FDH         LINE#         106
+  C:08FFH         LINE#         107
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/24/2023  20:20:14  PAGE 4
+
+
+  C:0901H         LINE#         108
+  C:0903H         LINE#         109
+  C:0905H         LINE#         110
+  C:0907H         LINE#         111
+  C:0909H         LINE#         112
+  C:0911H         LINE#         113
+  C:0913H         LINE#         114
+  -------         ENDPROC       SAIDA
+  -------         PROC          INTERRUPCAOEXT0
+  C:0930H         LINE#         118
+  C:0934H         LINE#         119
+  C:0941H         LINE#         120
+  C:0944H         LINE#         121
+  C:0944H         LINE#         122
+  -------         ENDPROC       INTERRUPCAOEXT0
+  -------         PROC          INTERRUPCAOTEMP0
+  C:0977H         LINE#         125
+  C:0979H         LINE#         126
+  C:097CH         LINE#         127
+  C:097FH         LINE#         128
+  C:0987H         LINE#         129
+  -------         ENDPROC       INTERRUPCAOTEMP0
+  -------         PROC          INTERRUPCAOEXT1
+  C:0949H         LINE#         133
+  C:094DH         LINE#         134
+  C:095AH         LINE#         135
+  C:095DH         LINE#         136
+  C:095DH         LINE#         137
+  -------         ENDPROC       INTERRUPCAOEXT1
+  -------         ENDMOD        P3_PARQUEDEESTACIONAMENTO
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0118H BYTE (13%) *
+******************************************************************************
+
+Program Size: data=17.2 xdata=0 code=424
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
