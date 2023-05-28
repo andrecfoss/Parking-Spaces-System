@@ -1,0 +1,228 @@
+A51 MACRO ASSEMBLER  P3_PARQUEDEESTACIONAMENTO                                            05/24/2023 20:19:45 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\P3_ParqueDeEstacionamento.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE P3_ParqueDeEstacionamento.a51 SET(SMALL) DEBUG PRINT(.\Listings\P3_Parq
+                      ueDeEstacionamento.lst) OBJECT(.\Objects\P3_ParqueDeEstacionamento.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; P3 -> Arquitetura de Computadores 
+                       2     ; Sistema de gestão de entradas em um parque de estacionamento
+                       3     ; Linguagem Assembly 
+                       4     
+                       5     ;Definição de constantes
+                       6     
+                       7     ;luzes
+  0090                 8     Verde1          EQU  P1.0               ; LED Verde1 
+  0091                 9     Vermelho1       EQU  P1.1               ; LED Vermelho1 
+  0092                10     Amarelo         EQU  P1.2               ; LED Amarelo 
+  0093                11     Verde2          EQU  P1.3               ; LED Verde2 
+  0094                12     Vermelho2       EQU  P1.4               ; LED Vermelho2 
+                      13     
+                      14     ;sensores
+  00B2                15     Sensor1         EQU  P3.2               ; Sensor1 -> P3^2
+  00B3                16     Sensor2         EQU  P3.3               ; Sensor2 -> P3^3 
+                      17             
+                      18     ;ciclos
+  0064                19     Contagens       EQU 100                 ; 10000us = 100contagens para chegar a 1s
+                      20             
+                      21     ;LUGARES DE ESTACIONAMENTO
+  0009                22     lugar           EQU 9                   ; lotação máxima de 9 lugares no estacionamento 
+                      23     
+  0005                24     constante       EQU 5                   ; Constante para controlar as contagens de 1 segundo
+                      25     
+                      26     ;display
+  00A0                27     display         EQU P2                  ; display -> P2 (P2^0, P2^1, P2^2, P2^3)
+                      28             
+                      29             
+                      30     ; Depois do reset
+----                  31     CSEG AT 0000h                           ; 1º Endereço de Memória do Programa 
+0000 804E             32     JMP Inicio                                      ; Salto Incondicional para o Início do Prog
+                             rama 
+                      33     
+                      34     ; Se ocorrer a interrupção externa 0
+----                  35     CSEG AT 0003h                           
+0003 8079             36     JMP  InterrupcaoExt0            ; Salto Incondicional para a Interrupção Externa 0
+                      37     
+                      38     ; Se ocorrer a interrupção externa 1
+----                  39     CSEG AT 00013h
+0013 01A7             40     JMP  InterrupcaoExt1            ; Salto Incondicional para a Interrupção Externa 1
+                      41     
+                      42     ; Tratamento da interrupção de temporização 0, para contar 10ms
+----                  43     CSEG AT 000Bh
+000B 01D0             44     JMP  InterrupcaoTemp0           ; Salto Incondicional para a Interrupção Timer 0
+                      45     
+                      46     
+                      47     
+----                  48     CSEG AT 0050h                           ; Programa inicia no endereço de Memória 50H
+0050                  49     Inicio:
+0050 758107           50             MOV SP, #7                              ; Endereço da STACK POINTER
+0053 1163             51             CALL Inicializacao              ; Chamada à Rotina de Inicialização onde vai conter
+                              as configurações dos registos SFR
+                      52             
+                      53     ;Programa principal
+0055                  54     Principal:                                      
+                      55             ;ligar e desligar leds
+A51 MACRO ASSEMBLER  P3_PARQUEDEESTACIONAMENTO                                            05/24/2023 20:19:45 PAGE     2
+
+0055 C290             56             CLR Verde1                              ; liga o led verde1
+0057 D291             57             SETB Vermelho1                  ; desliga o led vermelho1
+0059 D292             58             SETB Amarelo                    ; desliga o led amarelo
+005B C293             59             CLR Verde2                              ; liga o led verde2
+005D D294             60             SETB Vermelho2                  ; desliga o led vermelho1
+005F 89A0             61             MOV display, R1                 ; Move os Dados do Display para R1
+0061 80F2             62             JMP Principal                   ; Salto Incondicional para o Programa Principal 
+                      63             
+                      64     ;Inicialização 
+0063                  65     Inicializacao:
+                      66             ;IE - Interrupt Enable 
+0063 D2AF             67             SETB EA                                 ; Ativa as interrupções globais 
+0065 D2A8             68             SETB EX0                                ; Ativa a interrupção Externa 0
+0067 D2A9             69             SETB ET0                                ; Ativa a interrupção Timer 0
+0069 D2AA             70             SETB EX1                                ; Ativa a interrupção Externa 1
+                      71             
+                      72             ;TMOD - Timer Mode 
+006B 758901           73             MOV TMOD, #1                    ; Timer Mode 1 -> 
+006E 758CD8           74             MOV TH0, #0xD8                  ; Bit menos significativo no TH0 = 0xD8
+0071 758AF0           75             MOV TL0, #0xF0                  ; Bit mais significativo em TL0 = 0xF0
+                      76             
+                      77             ;IP
+0074 75B802           78             MOV IP, #2              ;prioridade mais elevada no zero
+                      79             
+                      80             ;TCON - Timer Control 
+0077 D288             81             SETB IT0                                ; Ativa Flag da interrupção Timer 0
+0079 D28A             82             SETB IT1                                ; Ativa Flag da interrupção Timer 0     
+                      83             
+007B 7909             84             MOV R1, #9                              ; Inicializa o Display no Dígito 9
+                      85             
+007D 22               86             RET                                             ; Retorno da Rotina Inicializacao
+                      87             
+                      88     
+                      89     ;Interrupção externa 0
+007E                  90     InterrupcaoExt0:                        ; Inicia a Rotina da Interrupção Externa 0
+007E B90001           91             CJNE R1, #0, Entrada    ; Compara se R1 != 0
+0081 32               92             RETI                                    ; Retorno da Interrupção 
+                      93             
+0082                  94     Entrada: ;controlar o ciclo dos 5 segundos      
+0082 C292             95             CLR Amarelo                             ; Desliga o LED Amarelo 
+0084 7B00             96             MOV R3, #0                              ; Contagem dos segundos = 0
+0086 7C00             97             MOV R4, #0                              ; Contagem de cada segundo = 0
+0088 D28C             98             SETB TR0                                ; TR0 =1 -> Inicia o Timer 0
+008A                  99     TempoAmarelo:
+008A BB0504          100             CJNE R3, #5     , TrocaAmarelo  ;Compara se R3 != 5
+008D D292            101             SETB Amarelo                    ; Ativa o LED Amarelo 
+008F 8012            102             JMP FimEntrada                  ; Salto Incondicional para a etiqueta FimEntrada
+                     103             
+0091                 104     TrocaAmarelo:                           
+0091 C290            105             CLR Verde1                              ; Desliga o LED Verde1
+0093 C294            106             CLR Vermelho2                   ; Desliga o LED Vermelho2 
+0095 D291            107             SETB Vermelho1                  ; Liga o LED Vermelho1 
+0097 D293            108             SETB Verde2                             ; Liga o LED Verde2 
+0099 BC64F5          109             CJNE R4, #Contagens, TrocaAmarelo
+009C B292            110             CPL Amarelo                     ; nega o bit
+009E 7C00            111             MOV R4, #0                              ; Inicia a Contagem de cada segundo  
+00A0 0B              112             INC R3                                  ; Incrementa a contagem dos 5 segundos
+00A1 80E7            113             JMP TempoAmarelo                ; Salto Incondicional para a Etiqueta TempoAmarelo 
+                     114             
+00A3                 115     FimEntrada:
+00A3 19              116             DEC R1                                  ; LUGAR = LUGAR - 1
+00A4 C28C            117             CLR TR0                                 ; Desativa Timer 0
+00A6 32              118             RETI                                    ; Retorno da Interrupção        
+                     119             
+                     120     ;Interrupção externa 1
+00A7                 121     InterrupcaoExt1:                        ; Inicia a Rotina da Interrupção Externa 1
+A51 MACRO ASSEMBLER  P3_PARQUEDEESTACIONAMENTO                                            05/24/2023 20:19:45 PAGE     3
+
+00A7 B90901          122             CJNE R1, #9, Saida              ; Compara se R1 != 9
+00AA 32              123             RETI                                    ; Retorno da Interrupção 
+                     124     
+00AB                 125     Saida: ;controlar o ciclo dos 5 segundos        
+00AB C292            126             CLR Amarelo
+00AD 7B00            127             MOV R3, #0                              ; Contagem dos segundos = 0
+00AF 7C00            128             MOV R4, #0                              ; Contagem de cada segundo = 0
+00B1 D28C            129             SETB TR0                                ; TR0 = 1 -> Inicia o Timer 0
+00B3                 130     Tempo_Amarelo:
+00B3 BB0504          131             CJNE R3, #5     , Troca_Amarelo ;COMPARA 
+00B6 D292            132             SETB Amarelo                    ; Liga o LED Amarelo 
+00B8 8012            133             JMP FimSaida                    ; Salto Incondicional para a etiqueta FimSaida 
+                     134             
+00BA                 135     Troca_Amarelo:
+00BA C293            136             CLR Verde2                              ; Desliga o LED Verde2 
+00BC C291            137             CLR Vermelho1                   ; Desliga o LED Vermelho1 
+00BE D294            138             SETB Vermelho2                  ; Liga o LED Vermelho2 
+00C0 D290            139             SETB Verde1                             ; Liga o LED Verde1 
+00C2 BC64F5          140             CJNE R4, #Contagens, Troca_Amarelo      ; Compara se R4 != #Contagens 
+00C5 B292            141             CPL Amarelo                     ; nega o bit (complemento para 2)
+00C7 7C00            142             MOV R4, #0                              ; Inicia a Contagem de cada segundo  
+00C9 0B              143             INC R3                                  ; Incrementa a contagem dos 5 segundos 
+00CA 80E7            144             JMP Tempo_Amarelo               ; Salto Incondicional para a Etiqueta Tempo_Amarelo 
+                     145             
+00CC                 146     FimSaida:
+00CC 09              147             INC R1                                  ; LUGAR = LUGAR + 1
+00CD C28C            148             CLR TR0                                 ; Desativa Timer 0
+00CF 32              149             RETI                                    ; Retorno da Interrupção 
+                     150             
+                     151     ;Interrupção do timer
+00D0                 152     InterrupcaoTemp0:
+00D0 758CD8          153             MOV TH0, #0xD8                  ; Coloca o valor de TH0 -> MSB: D8H
+00D3 758AF0          154             MOV TL0, #0xF0                  ; Coloca o valor de TL0 -> LSB: F0H 
+00D6 0C              155             INC R4                                  ; Incrementa a contagem de cada segundo 
+00D7 32              156             RETI                                    ; Retorno da Interrupção 
+                     157     
+                     158     END                                             
+A51 MACRO ASSEMBLER  P3_PARQUEDEESTACIONAMENTO                                            05/24/2023 20:19:45 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AMARELO. . . . . .  B ADDR   0090H.2 A   
+CONSTANTE. . . . .  N NUMB   0005H   A   
+CONTAGENS. . . . .  N NUMB   0064H   A   
+DISPLAY. . . . . .  D ADDR   00A0H   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ENTRADA. . . . . .  C ADDR   0082H   A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+EX0. . . . . . . .  B ADDR   00A8H.0 A   
+EX1. . . . . . . .  B ADDR   00A8H.2 A   
+FIMENTRADA . . . .  C ADDR   00A3H   A   
+FIMSAIDA . . . . .  C ADDR   00CCH   A   
+INICIALIZACAO. . .  C ADDR   0063H   A   
+INICIO . . . . . .  C ADDR   0050H   A   
+INTERRUPCAOEXT0. .  C ADDR   007EH   A   
+INTERRUPCAOEXT1. .  C ADDR   00A7H   A   
+INTERRUPCAOTEMP0 .  C ADDR   00D0H   A   
+IP . . . . . . . .  D ADDR   00B8H   A   
+IT0. . . . . . . .  B ADDR   0088H.0 A   
+IT1. . . . . . . .  B ADDR   0088H.2 A   
+LUGAR. . . . . . .  N NUMB   0009H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PRINCIPAL. . . . .  C ADDR   0055H   A   
+SAIDA. . . . . . .  C ADDR   00ABH   A   
+SENSOR1. . . . . .  B ADDR   00B0H.2 A   
+SENSOR2. . . . . .  B ADDR   00B0H.3 A   
+SP . . . . . . . .  D ADDR   0081H   A   
+TEMPOAMARELO . . .  C ADDR   008AH   A   
+TEMPO_AMARELO. . .  C ADDR   00B3H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+TROCAAMARELO . . .  C ADDR   0091H   A   
+TROCA_AMARELO. . .  C ADDR   00BAH   A   
+VERDE1 . . . . . .  B ADDR   0090H.0 A   
+VERDE2 . . . . . .  B ADDR   0090H.3 A   
+VERMELHO1. . . . .  B ADDR   0090H.1 A   
+VERMELHO2. . . . .  B ADDR   0090H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

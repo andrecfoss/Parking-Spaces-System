@@ -1,0 +1,3 @@
+".\Objects\P3_ParqueDeEstacionamento.obj" 
+TO ".\Objects\P3_CodigoAssembly" 
+PRINT(".\Listings\P3_CodigoAssembly.m51")
