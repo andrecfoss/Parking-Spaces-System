@@ -5,4 +5,4 @@ Software: Keil uVision5                              <br />
 Languages: <b>C</b> and <b>Assembly</b> (.a51)                     
 
 
-![image](https://github.com/andrecfoss/Parking-Spaces-System/assets/134842813/295625d6-ff79-4d50-88e8-62b25666e68b)
+![image](https://github.com/andrecfoss/Parking-Spaces-System/assets/134842813/0bb63ecf-9c93-4e90-bb36-8d4ec0aea7ab)
